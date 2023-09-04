@@ -1,31 +1,10 @@
-vpc= {
-  main = {
-    cidr = "10.0.0.0/16"
-
-    subnets = {
-      public = {
-        public1= { cidr =  "10.0.0.0/24",az = "us-east-1a" }
-        public2= { cidr =  "10.0.0.1/24",az = "us-east-1b" }
-      }
-       app= {
-        app1= { cidr =  "10.0.0.2/24",az = "us-east-1a" }
-        app2= { cidr =  "10.0.0.3/24",az = "us-east-1b" }
-      }
-      db = {
-        db1= { cidr =  "10.0.0.4/24",az = "us-east-1a" }
-        db2= { cidr =  "10.0.0.5/24",az = "us-east-1b" }
-      }
-
-    }
-
-
-  }
-}
 default_vpc_id             = "vpc-0a8e3e6a0d6cb90d9"
 default_vpc_cidr           = "172.31.0.0/16"
 default_vpc_route_table_id = "rtb-0b9a867762d6530ba"
-#zone_id                    = "Z0021413JFIQEJP9ZO9Z"
-#env                        = "dev"
+zone_id                    = "Z0021413JFIQEJP9ZO9Z"
+env                        = "dev"
+ssh_ingress_cidr           = ["172.31.85.208/32"]
+monitoring_ingress_cidr    = ["172.31.91.26/32"]
 
 tags = {
   company_name  = "ABC Tech"
@@ -34,6 +13,27 @@ tags = {
   cost_center   = "ecom_rs"
   created_by    = "terraform"
 }
+
+vpc = {
+  main = {
+    cidr = "10.0.0.0/16"
+    subnets = {
+      public = {
+        public1 = { cidr = "10.0.0.0/24", az = "us-east-1a" }
+        public2 = { cidr = "10.0.1.0/24", az = "us-east-1b" }
+      }
+      app = {
+        app1 = { cidr = "10.0.2.0/24", az = "us-east-1a" }
+        app2 = { cidr = "10.0.3.0/24", az = "us-east-1b" }
+      }
+      db = {
+        db1 = { cidr = "10.0.4.0/24", az = "us-east-1a" }
+        db2 = { cidr = "10.0.5.0/24", az = "us-east-1b" }
+      }
+    }
+  }
+}
+
 alb = {
   public = {
     internal        = false
@@ -61,6 +61,7 @@ docdb = {
     instance_class          = "db.t3.medium"
   }
 }
+
 rds = {
   main = {
     rds_type                = "mysql"
@@ -102,6 +103,8 @@ apps = {
     max_size         = 3
     min_size         = 1
     lb_priority      = 1
+    lb_type          = "public"
+    parameters       = []
   }
   catalogue = {
     instance_type    = "t3.micro"
@@ -110,6 +113,8 @@ apps = {
     max_size         = 3
     min_size         = 1
     lb_priority      = 2
+    lb_type          = "private"
+    parameters       = ["docdb"]
   }
   user = {
     instance_type    = "t3.micro"
@@ -118,6 +123,8 @@ apps = {
     max_size         = 3
     min_size         = 1
     lb_priority      = 3
+    lb_type          = "private"
+    parameters       = ["docdb"]
   }
   cart = {
     instance_type    = "t3.micro"
@@ -126,6 +133,8 @@ apps = {
     max_size         = 3
     min_size         = 1
     lb_priority      = 4
+    lb_type          = "private"
+    parameters       = []
   }
   payment = {
     instance_type    = "t3.micro"
@@ -134,6 +143,8 @@ apps = {
     max_size         = 3
     min_size         = 1
     lb_priority      = 5
+    lb_type          = "private"
+    parameters       = ["rabbitmq"]
   }
   shipping = {
     instance_type    = "t3.micro"
@@ -142,9 +153,7 @@ apps = {
     max_size         = 3
     min_size         = 1
     lb_priority      = 6
+    lb_type          = "private"
+    parameters       = ["rds"]
   }
 }
-
-
-
-

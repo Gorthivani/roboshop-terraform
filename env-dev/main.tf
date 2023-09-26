@@ -13,6 +13,7 @@ tags = {
   cost_center   = "ecom_rs"
   created_by    = "terraform"
 }
+ az=["us-east-1a", "us-east-1b"]
 
 vpc = {
   main = {
